@@ -1,1 +1,6 @@
-
+{
+  "hello": "Hello! How are you?",
+  "name": "My name is Local AI",
+  "bye": "Bye! Take care",
+  "help": "Tell me what you need"
+}
