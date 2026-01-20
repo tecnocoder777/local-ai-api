@@ -1,5 +1,11 @@
-const brain = [
-  { key: ["hello","hi"], reply: "Hello!" },
-  { key: ["hashtag"], reply: "#viral #trending #reels" },
-  { key: ["love"], reply: "Love is powerful." }
-];
+function ai(prompt) {
+  prompt = prompt.toLowerCase();
+
+  if (prompt.includes("hello"))
+    return "Hello!";
+
+  if (prompt.includes("name"))
+    return "My name is Local AI";
+
+  return "Thinking about " + prompt;
+}
