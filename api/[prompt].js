@@ -1,11 +1,20 @@
-function ai(prompt) {
-  prompt = prompt.toLowerCase();
+export default function handler(req, res) {
+  const msg = req.query.msg || "";
 
-  if (prompt.includes("hello"))
-    return "Hello!";
+  function reply(text) {
+    text = text.toLowerCase();
 
-  if (prompt.includes("name"))
-    return "My name is Local AI";
+    if (text.includes("hello"))
+      return "Hello! How are you?";
 
-  return "Thinking about " + prompt;
+    if (text.includes("name"))
+      return "My name is Local AI.";
+
+    if (text.includes("bye"))
+      return "Bye! Take care.";
+
+    return "I received your message: " + text;
+  }
+
+  res.send(reply(msg));
 }
