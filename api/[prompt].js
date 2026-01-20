@@ -1,20 +1,19 @@
+import brain from "../data.json";
+
 export default function handler(req, res) {
-  const msg = req.query.msg || "";
+  const msg = (req.query.msg || "").toLowerCase();
 
-  function reply(text) {
-    text = text.toLowerCase();
-
-    if (text.includes("hello"))
-      return "Hello! How are you?";
-
-    if (text.includes("name"))
-      return "My name is Local AI.";
-
-    if (text.includes("bye"))
-      return "Bye! Take care.";
-
-    return "I received your message: " + text;
+  // direct match
+  if (brain[msg]) {
+    return res.send(brain[msg]);
   }
 
-  res.send(reply(msg));
+  // partial match
+  for (let key in brain) {
+    if (msg.includes(key)) {
+      return res.send(brain[key]);
+    }
+  }
+
+  res.send("Sorry, I don't understand");
 }
