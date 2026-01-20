@@ -13,6 +13,9 @@ export default function handler(req, res) {
 
   else if (text.includes("time"))
     reply = "Current time is " + new Date().toLocaleTimeString();
+    
+    else if (text.includes("kya hal chal"))
+     reply = "sab badhiya tum batao";
 
   res.setHeader("Content-Type", "text/plain");
   res.status(200).send(reply);
