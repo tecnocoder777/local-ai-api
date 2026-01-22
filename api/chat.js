@@ -1,9 +1,9 @@
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET");
 
   try {
     const prompt = req.query.prompt;
+
     if (!prompt) {
       return res.json({ status: false, error: "prompt missing" });
     }
@@ -24,14 +24,17 @@ export default async function handler(req, res) {
 
     const data = await r.json();
 
-    // 🔥 DeepSeek response fix
+    // 🔥 SAFE RESPONSE READ
     let reply = "No response";
 
-    if (data.choices && data.choices.length > 0) {
-      reply =
-        data.choices[0].message?.content ||
-        data.choices[0].text ||
-        "No response";
+    if (
+      data &&
+      data.choices &&
+      data.choices.length > 0 &&
+      data.choices[0].message &&
+      data.choices[0].message.content
+    ) {
+      reply = data.choices[0].message.content;
     }
 
     res.json({
@@ -43,7 +46,7 @@ export default async function handler(req, res) {
   } catch (err) {
     res.json({
       status: false,
-      error: err.toString()
+      error: err.message
     });
   }
 }
