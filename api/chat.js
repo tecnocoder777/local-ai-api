@@ -1,20 +1,14 @@
 export default async function handler(req, res) {
-  // CORS (Android / Sketchware ke liye important)
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET");
 
   try {
-    // GET parameter
     const prompt = req.query.prompt;
-
     if (!prompt) {
-      return res.status(400).json({
-        status: false,
-        error: "prompt parameter missing"
-      });
+      return res.json({ status: false, error: "prompt missing" });
     }
 
-    const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
+    const r = await fetch("https://api.deepseek.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -28,21 +22,28 @@ export default async function handler(req, res) {
       })
     });
 
-    const data = await response.json();
+    const data = await r.json();
 
-    // Clean response (sirf text)
-    const reply = data.choices?.[0]?.message?.content || "No response";
+    // 🔥 DeepSeek response fix
+    let reply = "No response";
 
-    res.status(200).json({
+    if (data.choices && data.choices.length > 0) {
+      reply =
+        data.choices[0].message?.content ||
+        data.choices[0].text ||
+        "No response";
+    }
+
+    res.json({
       status: true,
       prompt: prompt,
       reply: reply
     });
 
-  } catch (e) {
-    res.status(500).json({
+  } catch (err) {
+    res.json({
       status: false,
-      error: e.toString()
+      error: err.toString()
     });
   }
 }
