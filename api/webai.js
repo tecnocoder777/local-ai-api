@@ -1,22 +1,21 @@
 export default async function handler(req, res) {
   const q = req.query.q;
-  if (!q) return res.json({ error: "No question" });
+  if (!q) return res.json({ error: "Question missing" });
 
-  const searchUrl =
-    "https://duckduckgo.com/html/?q=" + encodeURIComponent(q);
+  // Wikipedia se direct answer (safe & legal)
+  const wikiUrl =
+    "https://en.wikipedia.org/api/rest_v1/page/summary/" +
+    encodeURIComponent(q);
 
-  const response = await fetch(searchUrl);
-  const html = await response.text();
+  try {
+    const r = await fetch(wikiUrl);
+    const data = await r.json();
 
-  // Simple text extract
-  let text = html
-    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
-    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
-    .replace(/<[^>]+>/g, " ")
-    .substring(0, 1000);
-
-  res.json({
-    question: q,
-    answer: text.trim()
-  });
+    res.json({
+      question: q,
+      answer: data.extract || "No clear answer found"
+    });
+  } catch (e) {
+    res.json({ error: "Failed to fetch answer" });
+  }
 }
